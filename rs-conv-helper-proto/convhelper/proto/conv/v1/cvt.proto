@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package convhelper.proto.conv.v1;
+
+import "convhelper/proto/uuid/v1/u.proto";
+
+message ConvertRequest {
+  convhelper.proto.uuid.v1.Uuid request_id = 1;
+  bytes original = 2;
+}
+
+message ConvertResponse {
+  bytes converted = 1;
+}
+
+service CvtService {
+  rpc Convert(ConvertRequest) returns (ConvertResponse);
+}
