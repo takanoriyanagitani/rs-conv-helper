@@ -16,3 +16,34 @@ message ConvertResponse {
 service CvtService {
   rpc Convert(ConvertRequest) returns (ConvertResponse);
 }
+
+message Src {
+  message GetSrcRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+    bytes key = 2;
+  }
+
+  message GetSrcResponse {
+    bytes val = 1; // original bytes
+  }
+}
+
+service SrcService {
+  rpc GetSrc(Src.GetSrcRequest) returns (Src.GetSrcResponse);
+}
+
+message Ind {
+  message ConvManyRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+    repeated bytes keys = 2;
+  }
+
+  message ConvManyResponse {
+    bytes key = 1;
+    bytes converted = 2;
+  }
+}
+
+service IndirectService {
+  rpc ConvMany(Ind.ConvManyRequest) returns (stream Ind.ConvManyResponse);
+}
