@@ -60,3 +60,43 @@ message Ind {
 service IndirectService {
   rpc ConvMany(Ind.ConvManyRequest) returns (stream Ind.ConvManyResponse);
 }
+
+message Bkt {
+  message CheckInfo {
+    // The key to be removed
+    bytes key = 1;
+
+    // Check this value derived from the val to be removed(e.g, checksum)
+    bytes validate = 2;
+  }
+  message DelRequest {
+    repeated CheckInfo keys = 1;
+  }
+  message Rejected {
+    // keys rejected(e.g, checksum mismatch, bitrot, I/O error)
+    repeated bytes rejected_keys = 1;
+
+    // keys validated(e.g, checksum matched)
+    repeated bytes validated_keys = 2;
+
+    // keys absent
+    repeated bytes absent_keys = 3;
+  }
+  // All items removed or nothing removed in case of an error
+  message DelResponse {
+    oneof status {
+      // Time the bucket and all its items were removed
+      google.protobuf.Timestamp removed = 1;
+
+      // The bucket to be removed was absent
+      google.protobuf.Empty absent = 2;
+
+      // Nothing can be removed due to errors(e.g, checksum mismatch)
+      Rejected rejected = 3;
+    }
+  }
+}
+
+service BucketService {
+  rpc Del(Bkt.DelRequest) returns (Bkt.DelResponse);
+}
