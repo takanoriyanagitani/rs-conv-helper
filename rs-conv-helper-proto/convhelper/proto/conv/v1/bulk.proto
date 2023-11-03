@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package convhelper.proto.conv.v1;
+
+import "convhelper/proto/uuid/v1/u.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+message In {
+  message GetRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+
+    // optional namespace; e.g, cafef00d-dead-beaf-face-864299792458-2023-11-04
+    string namespace = 2;
+
+    // optional bucket name; e.g, 07:40
+    string bucket = 3;
+
+    // keys in a bucket; e.g, 00, 01, 02, ..., 59
+    repeated bytes keys = 4;
+  }
+  message GetResponse {
+    bytes key = 1;
+    bytes val = 2;
+  }
+
+  message CheckInfo {
+    // see GetRequest
+    bytes key = 1;
+
+    // validation info before deletes; e.g, checksum
+    bytes validate = 2;
+  }
+  message DelRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+
+    // see GetRequest
+    string namespace = 2;
+
+    // see GetRequest
+    string bucket = 3;
+
+    repeated CheckInfo checks = 4;
+  }
+  message DelRejected {
+    // number of key/val pairs validated
+    fixed32 validated = 1;
+
+    // number of key/val pairs absent
+    fixed32 absent = 2;
+
+    // number of key/val pairs rejected
+    fixed32 rejected = 3;
+  }
+  message DelResponse {
+    oneof status {
+      // all key/val pairs in a bucket removed
+      google.protobuf.Timestamp removed = 1;
+
+      // the bucket to be removed was absent
+      google.protobuf.Empty absent = 2;
+
+      // nothing removed due to errors
+      DelRejected rejected = 3;
+    }
+  }
+}
+
+service InputService {
+  // Gets all key/val pairs in a bucket
+  rpc Get(In.GetRequest) returns (stream In.GetResponse);
+
+  // Removes all items in a bucket or remove nothing on errors
+  rpc Del(In.DelRequest) returns (stream In.DelResponse);
+}

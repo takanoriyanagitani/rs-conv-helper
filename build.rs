@@ -8,6 +8,7 @@ fn main() -> Result<(), io::Error> {
             &[
                 "convhelper/proto/conv/v1/cvt.proto",
                 "convhelper/proto/uuid/v1/u.proto",
+                "convhelper/proto/conv/v1/bulk.proto",
             ],
             &["rs-conv-helper-proto"],
         )?;
