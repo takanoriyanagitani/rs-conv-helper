@@ -13,7 +13,7 @@ message In {
     // optional namespace; e.g, cafef00d-dead-beaf-face-864299792458-2023-11-04
     string namespace = 2;
 
-    // optional bucket name; e.g, 07:40
+    // optional bucket name; e.g, 08:31
     string bucket = 3;
 
     // keys in a bucket; e.g, 00, 01, 02, ..., 59
@@ -72,4 +72,39 @@ service InputService {
 
   // Removes all items in a bucket or remove nothing on errors
   rpc Del(In.DelRequest) returns (stream In.DelResponse);
+}
+
+message Out {
+  message SaveItem {
+    bytes key = 1;
+
+    // A converted value
+    bytes val = 2;
+  }
+  message SaveRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+
+    // output namespace; e.g, cafef00d-dead-beaf-face-864299792458/2023/11/05
+    string namespace = 2;
+
+    // output bucket; e.g, 08:30
+    string bucket = 3;
+
+    // output key/val pairs
+    repeated SaveItem items = 4;
+  }
+  message SaveResponse {
+    // input namespace; e.g, cafef00d-dead-beaf-face-864299792458/2023/11/05
+    string namespace = 1;
+
+    // input bucket; e.g, 08:31
+    string bucket = 2;
+
+    // see In.CheckInfo
+    repeated In.CheckInfo results = 3;
+  }
+}
+
+service OutputService {
+  rpc Save(Out.SaveRequest) returns (stream Out.SaveResponse);
 }
