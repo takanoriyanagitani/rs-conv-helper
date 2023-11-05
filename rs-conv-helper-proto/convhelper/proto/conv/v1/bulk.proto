@@ -17,6 +17,8 @@ message In {
     string bucket = 3;
 
     // keys in a bucket; e.g, 00, 01, 02, ..., 59
+    //
+    // omit keys to get all key/val pairs in a bucket
     repeated bytes keys = 4;
   }
   message GetResponse {
