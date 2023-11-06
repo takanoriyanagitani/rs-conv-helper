@@ -26,6 +26,21 @@ message In {
     bytes val = 2;
   }
 
+  message GetsRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+
+    // optional namespace; e.g, cafef00d-dead-beaf-face-864299792458-2023-11-04
+    string namespace = 2;
+
+    // bucket names; e.g, 07:00,07:01,07:02, ... 07:07
+    repeated string buckets = 3;
+  }
+  message GetsResponse {
+    string bucket = 1;
+    bytes key = 2;
+    bytes val = 3;
+  }
+
   message CheckInfo {
     // see GetRequest
     bytes key = 1;
@@ -71,6 +86,8 @@ message In {
 service InputService {
   // Gets all key/val pairs in a bucket
   rpc Get(In.GetRequest) returns (stream In.GetResponse);
+
+  rpc Gets(In.GetsRequest) returns (stream In.GetsResponse);
 
   // Removes all items in a bucket or remove nothing on errors
   rpc Del(In.DelRequest) returns (stream In.DelResponse);
