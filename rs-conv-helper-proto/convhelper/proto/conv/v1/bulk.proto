@@ -125,5 +125,6 @@ message Out {
 }
 
 service OutputService {
+  // Saves small number of items(e.g, size of SaveRequest < 1 MiB)
   rpc Save(Out.SaveRequest) returns (stream Out.SaveResponse);
 }
