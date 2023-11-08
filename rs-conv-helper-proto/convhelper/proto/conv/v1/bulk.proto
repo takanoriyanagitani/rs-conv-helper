@@ -122,9 +122,35 @@ message Out {
     // see In.CheckInfo
     repeated In.CheckInfo results = 3;
   }
+
+  message SndManyRequest {
+    convhelper.proto.uuid.v1.Uuid request_id = 1;
+
+    // output namespace; e.g, cafef00d-dead-beaf-face-864299792458/2023/11/05
+    string namespace = 2;
+
+    // output bucket; e.g, 08:30
+    string bucket = 3;
+
+    // output key/val pair
+    SaveItem item = 4;
+  }
+  message SndManyResponse {
+    // input namespace; e.g, cafef00d-dead-beaf-face-864299792458/2023/11/05
+    string namespace = 1;
+
+    // input bucket; e.g, 08:31
+    string bucket = 2;
+
+    // see In.CheckInfo
+    In.CheckInfo result = 3;
+  }
 }
 
 service OutputService {
   // Saves small number of items(e.g, size of SaveRequest < 1 MiB)
   rpc Save(Out.SaveRequest) returns (stream Out.SaveResponse);
+
+  // Saves many items
+  rpc SndMany(stream Out.SndManyRequest) returns (stream Out.SndManyResponse);
 }
