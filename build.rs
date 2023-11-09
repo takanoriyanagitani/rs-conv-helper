@@ -3,7 +3,7 @@ use std::io;
 fn main() -> Result<(), io::Error> {
     tonic_build::configure()
         .build_server(true)
-        .build_client(false)
+        .build_client(true)
         .compile(
             &[
                 "convhelper/proto/conv/v1/cvt.proto",
