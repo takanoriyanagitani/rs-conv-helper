@@ -3,6 +3,9 @@ name = "rs-conv-helper"
 version = "0.1.0"
 edition = "2021"
 
+[lints.rust]
+unsafe_code = "forbid"
+
 [dependencies.prost]
 version = "0.12"
 default-features = false
